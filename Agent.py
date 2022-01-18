@@ -1,12 +1,12 @@
 from collections import deque
 from keras.models import Model, load_model
 import numpy as np
-from numpy import random
+import random
 
 class Agent():
 
-    def __init__(self, state_space, action_space, epsilon, epsilon_min, epsilon_decay,
-                                    batch_size, train_start_step):
+    def __init__(self, state_space, action_space, gamma, epsilon, epsilon_min, epsilon_decay,
+                                    batch_size, train_start_step, Model):
         
         # Environment parameters
         self.state_size = state_space
@@ -22,6 +22,9 @@ class Agent():
         self.batch_size = batch_size
         self.train_start = train_start_step
         self.memory = deque(maxlen=2000)
+        self.gamma = gamma
+        #Model
+        self.model = Model
 
 
     def remember(self, state, action, reward, next_state, done):
@@ -34,11 +37,11 @@ class Agent():
         if self.epsilon > self.epsilon_min:
             self.epsilon *= self.epsilon_decay
 
-    def take_action(self, state, model): # Be greedy
+    def take_action(self, state): # Be greedy
         if self.epsilon > np.random.random():
-            action = np.random.randint(0,self.action_size-1)
+            action = np.random.randint(0,self.action_size)
         else:
-            action = np.argmax(model.predict(state))
+            action = np.argmax(self.model.predict(state))
         
         return action
 
