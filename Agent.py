@@ -1,70 +1,86 @@
-from collections import defaultdict
-from typing import DefaultDict
+from collections import deque
+from keras.models import Model, load_model
 import numpy as np
 from numpy import random
 
 class Agent():
-    def __init__(self, state_space, action_space):
-        #self.policy = defaultdict(lambda: np.zeros(action_space))
-        self.state_space = state_space
-        self.action_space = action_space
 
-        self.policy = {}  # Policy is a dictionary, where the key is the state
-        for state in range(state_space + 1):  
-            self.policy[state] = np.zeros(action_space)  # The items are a vector of size 3
+    def __init__(self, state_space, action_space, episodes, epsilon, epsilon_min, epsilon_decay,
+                                    batch_size, train_start_step):
+        
+        # Environment parameters
+        self.state_size = state_space
+        self.action_size = action_space
+        
+        #E-greedy parameters
+        self.epsilon = epsilon
+        self.epsilon_min = epsilon_min
+        self.epsilon_decay = epsilon_decay
 
-    def agent_start_unirfomly_random(self):
-        for state in range(self.state_space + 1):
-            self.policy[state] = np.ones(self.action_space) / self.action_space
-
-    def agent_start_randomly(self):
-        for state in range(self.state_space + 1):
-            self.policy[state] = np.random.dirichlet(np.ones(self.action_space), size = 1)
+        #Train parameters
+        self.episodes = episodes
+        self.batch_size = batch_size
+        self.train_start = train_start_step
+        self.memory = deque(maxlen=2000)
 
 
-    def agent_fav_right(self):
-        for state in range(self.state_space +1):
-            if state >= 37 and state <=47:
-                self.policy[state] = [0,0,0,0]
-            else:
-                self.policy[state] = [0.15, 0.15, 0.15, 0.55]  #Favourly to the right
+    def remember(self, state, action, reward, next_state, done):
+        # Memorize the trajectory
+        self.memory.append((state, action, reward, next_state, done))
+        if len(self.memory) > self.train_start: # check for size of the memory
+            self.decay_epsilon()
+
+    def decay_epsilon(self): # Decay epsilon
+        if self.epsilon > self.epsilon_min:
+            self.epsilon *= self.epsilon_decay
 
     def agent_action(self, state): # Be greedy
-        q_values = self.policy[state]
-        top = float("-inf")
-        tie_vals = []
-        
-        for ind in range(len(q_values)):
-            if q_values[ind] > top:
-                top = q_values[ind]
-                tie_vals = []
-                
-            
-            if q_values[ind] == top:
-                tie_vals.append(ind)
-                
-        action =  random.choice(tie_vals)      
-        return action
-        
-
-    def agent_action_epsilon(self, state, epsilon):
-        if (epsilon > np.random.random()):
-            action = np.random.randint(0,4)
+        if self.epsilon > np.random.random():
+            action = np.random.randint(0,self.action_size-1)
         else:
-            # action = np.argmax(self.policy[state])
-            action = self.agent_action(state)
+            action = np.argmax(self.model.predict(state))
         
         return action
 
-    def agent_update_policy(self, s, a, r, next_s, alpha, gamma):
-        q_values = self.policy[s]
-        next_q_values = self.policy[next_s]
-        q_values[a] = q_values[a] + alpha * (r + gamma*(np.max(next_q_values)) -q_values[a])
+    def replay(self):
+        if len(self.memory) < self.train_start:
+            return
+        # Randomly sample minibatch from the memory
+        # Minibatch of size min(len(memory)) or batch size
 
-        self.policy[s] = q_values
+        minibatch = random.sample(self.memory, min(len(self.memory), self.batch_size))
+        state = np.zeros((self.batch_size, self.state_size))
+        next_state = np.zeros((self.batch_size, self.state_size)) # matrix
+        action, reward, done = [], [], []
+
+        # before prediction
+        for i in range(self.batch_size):
+            state[i] = minibatch[i][0]
+            action.append(minibatch[i][1])
+            reward.append(minibatch[i][2])
+            next_state[i] = minibatch[i][3]
+            done.append(minibatch[i][4])
+        
+        # Batch prediction
+        target = self.model.predict(state)
+        target_next = self.model.predict(next_state)
+
+        for i in range(self.batch_size):
+            # Correction of the Q val for action used
+            if done[i]:
+                target[i][action[i]] = reward[i]
+            else:
+                # Standard DQN
+                # DQN chooses the max Q value among next action
+                # Selection and evaluation of action is on the target of Q Network
+                # Q_max = max_a' Q_target(s', a')
+                target[i][action[i]] = reward[i] + self.gamma * (np.amax(target_next[i]))
+        # Train
+        self.model.fit(state, target, batch_size=self.batch_size, verbose=0)
+
+    def load(self, name):
+        self.model = load_model(name)
     
-    def agent_update_policy_end(self, s,a,r, alpha):
-        q_values = self.policy[s]
-        q_values[a] = q_values[a] + alpha * (r  - q_values[a])
+    def save(self, name):
+        self.model.save(name)
 
-        self.policy[s] = q_values

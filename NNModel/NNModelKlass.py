@@ -18,5 +18,10 @@ def NNModelKlasse(input_shape, action_space):
     X = Dense(64, activation="relu", kernel_initializer='he_uniform')(X)
 
     #Output Layer with # of actions: 2 nodes (left and right)
-    
+    X = Dense(action_space, activation=None, kernel_initializer='he_uniform')(X)
+
+    model = Model(inputs = X_input, outputs = X, name='CartPole_DQN_model')
+    model.compile(loss="mean_squared_error", optimizer=RMSprop(lr=0.00025, rho=0.95, epsilon=0.01), metrics=["accuracy"])
+    model.summary()
+    return model
 
