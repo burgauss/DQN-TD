@@ -8,6 +8,7 @@ from Agent import Agent
 # from Tests.EnvironmentTest import EnvironmentTester
 from Environment_Modul.CartPoleEnvironment import CartPoleEnvironment
 from Environment_Modul.CartPoleEnvironment import createEnvironment
+from NNModel.NNModelKlass import NNModelKlasse
 
 # Hyperparameters
 
@@ -31,12 +32,16 @@ def main():
     DQNAgent = Agent(state_size, action_size, EPSILON,
                         EPSILON_MIN, EPSILON_DECAY, BATCH_SIZE,
                         TRAIN_START)
-    #trainNetwork(env, DQNAgent, EPISODES)
+
+    # NN creation
+    NNModel = NNModelKlasse(input_shape=(state_size,), action_space=action_size)
+
+    trainNetwork(env, DQNAgent, EPISODES, NNModel)
 
 
 
 
-def trainNetwork(env, Agent, episodes):
+def trainNetwork(env, Agent, episodes, NNModel):
     for episode in range(episodes):
         state = env.reset()
         state = np.reshape(state, [1, Agent.state_size])
@@ -44,7 +49,7 @@ def trainNetwork(env, Agent, episodes):
         i = 0
         while not done:
             #env.render()
-            action = Agent.take_action(state)
+            action = Agent.take_action(state, NNModel)
             next_state, reward, done, _ = env.step(action)
             next_state = np.reshape(next_state, [1, Agent.state_size])
             #_max_episode_steps restricted to 200

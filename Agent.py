@@ -34,11 +34,11 @@ class Agent():
         if self.epsilon > self.epsilon_min:
             self.epsilon *= self.epsilon_decay
 
-    def take_action(self, state): # Be greedy
+    def take_action(self, state, model): # Be greedy
         if self.epsilon > np.random.random():
             action = np.random.randint(0,self.action_size-1)
         else:
-            action = np.argmax(self.model.predict(state))
+            action = np.argmax(model.predict(state))
         
         return action
 
