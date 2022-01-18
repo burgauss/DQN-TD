@@ -39,8 +39,8 @@ def main():
                         TRAIN_START, NNModel)
 
 
-    #trainNetwork(env, DQNAgent, EPISODES)
-    test_agent_actions(env, DQNAgent, EPISODES)
+    trainNetwork(env, DQNAgent, EPISODES)
+    #test_agent_actions(env, DQNAgent, EPISODES)
 
 
 
@@ -51,7 +51,7 @@ def trainNetwork(env, Agent, episodes):
         done = False
         i = 0
         while not done:
-            #env.render()
+            env.render()
             action = Agent.take_action(state)
             next_state, reward, done, _ = env.step(action)
             next_state = np.reshape(next_state, [1, Agent.state_size])
@@ -69,6 +69,7 @@ def trainNetwork(env, Agent, episodes):
                 if i == env._max_episode_steps:
                     print("Saving trained model as cartpole-dqn.h5")
                     Agent.save("cartpole-dqn-tets.h5")
+                    env.close()
                     return
             Agent.replay()
                 
