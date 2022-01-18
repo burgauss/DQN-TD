@@ -5,7 +5,7 @@ from numpy import random
 
 class Agent():
 
-    def __init__(self, state_space, action_space, episodes, epsilon, epsilon_min, epsilon_decay,
+    def __init__(self, state_space, action_space, epsilon, epsilon_min, epsilon_decay,
                                     batch_size, train_start_step):
         
         # Environment parameters
@@ -18,7 +18,7 @@ class Agent():
         self.epsilon_decay = epsilon_decay
 
         #Train parameters
-        self.episodes = episodes
+        # self.episodes = episodes
         self.batch_size = batch_size
         self.train_start = train_start_step
         self.memory = deque(maxlen=2000)
@@ -34,7 +34,7 @@ class Agent():
         if self.epsilon > self.epsilon_min:
             self.epsilon *= self.epsilon_decay
 
-    def agent_action(self, state): # Be greedy
+    def take_action(self, state): # Be greedy
         if self.epsilon > np.random.random():
             action = np.random.randint(0,self.action_size-1)
         else:
