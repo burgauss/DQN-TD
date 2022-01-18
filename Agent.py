@@ -23,6 +23,7 @@ class Agent():
         self.train_start = train_start_step
         self.memory = deque(maxlen=2000)
         self.gamma = gamma
+        
         #Model
         self.model = Model
 
