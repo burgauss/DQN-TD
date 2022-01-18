@@ -24,18 +24,48 @@ GAMMA = 0.98
 def main():
     # Environment creation
     env, state_size, action_size = createEnvironment()
+
+    #test_environment_variables(env)
+
     # Agent Creation
-    DQNAgent = Agent(state_size, action_size, EPISODES, EPSILON,
+    DQNAgent = Agent(state_size, action_size, EPSILON,
                         EPSILON_MIN, EPSILON_DECAY, BATCH_SIZE,
                         TRAIN_START)
-    trainNetwork(env, DQNAgent)
+    #trainNetwork(env, DQNAgent, EPISODES)
 
 
 
 
-def trainNetwork(env, Agent):
-    for episode in range(Agent.episodes):
+def trainNetwork(env, Agent, episodes):
+    for episode in range(episodes):
         state = env.reset()
+        state = np.reshape(state, [1, Agent.state_size])
+        done = False
+        i = 0
+        while not done:
+            #env.render()
+            action = Agent.take_action(state)
+            next_state, reward, done, _ = env.step(action)
+            next_state = np.reshape(next_state, [1, Agent.state_size])
+            #_max_episode_steps restricted to 200
+            if not done or i == env._max_episode_steps-1:
+                reward = reward
+            else:
+                # if done the punishment is -100
+                reward = -100
+            Agent.remember(state, action, reward, next_state, done)
+            state = next_state
+            i += 1
+            if done:
+                print("episode: {}/{}, score: {}, e: {:.2}".format(episode, episodes , i, Agent.epsilon))
+                if i == env._max_episode_steps:
+                    print("Saving trained model as cartpole-dqn.h5")
+                    Agent.save("cartpole-dqn-tets.h5")
+                    return
+                
+
+def test_environment_variables(env):
+    print(env._max_episode_steps)
 
 
 if __name__ == '__main__':
