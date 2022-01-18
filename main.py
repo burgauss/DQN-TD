@@ -9,6 +9,8 @@ from Agent import Agent
 from Environment_Modul.CartPoleEnvironment import CartPoleEnvironment
 from Environment_Modul.CartPoleEnvironment import createEnvironment
 from NNModel.NNModelKlass import NNModelKlasse
+from Tests.tests import test_environment_variables
+from Tests.tests import test_agent_actions
 
 # Hyperparameters
 
@@ -17,7 +19,7 @@ EPSILON = 1.0   # exploration rate
 EPSILON_MIN = .001
 EPSILON_DECAY = 0.999
 BATCH_SIZE = 64
-TRAIN_START = 1000
+TRAIN_START = 500
 GAMMA = 0.98
 #########################
 
@@ -28,20 +30,21 @@ def main():
 
     #test_environment_variables(env)
 
-    # Agent Creation
-    DQNAgent = Agent(state_size, action_size, EPSILON,
-                        EPSILON_MIN, EPSILON_DECAY, BATCH_SIZE,
-                        TRAIN_START)
-
     # NN creation
     NNModel = NNModelKlasse(input_shape=(state_size,), action_space=action_size)
+    
+    # Agent Creation
+    DQNAgent = Agent(state_size, action_size, GAMMA, EPSILON,
+                        EPSILON_MIN, EPSILON_DECAY, BATCH_SIZE,
+                        TRAIN_START, NNModel)
 
-    trainNetwork(env, DQNAgent, EPISODES, NNModel)
+
+    #trainNetwork(env, DQNAgent, EPISODES)
+    test_agent_actions(env, DQNAgent, EPISODES)
 
 
 
-
-def trainNetwork(env, Agent, episodes, NNModel):
+def trainNetwork(env, Agent, episodes):
     for episode in range(episodes):
         state = env.reset()
         state = np.reshape(state, [1, Agent.state_size])
@@ -49,7 +52,7 @@ def trainNetwork(env, Agent, episodes, NNModel):
         i = 0
         while not done:
             #env.render()
-            action = Agent.take_action(state, NNModel)
+            action = Agent.take_action(state)
             next_state, reward, done, _ = env.step(action)
             next_state = np.reshape(next_state, [1, Agent.state_size])
             #_max_episode_steps restricted to 200
@@ -67,10 +70,8 @@ def trainNetwork(env, Agent, episodes, NNModel):
                     print("Saving trained model as cartpole-dqn.h5")
                     Agent.save("cartpole-dqn-tets.h5")
                     return
+            Agent.replay()
                 
-
-def test_environment_variables(env):
-    print(env._max_episode_steps)
 
 
 if __name__ == '__main__':
