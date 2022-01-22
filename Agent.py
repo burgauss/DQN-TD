@@ -71,14 +71,14 @@ class Agent():
 
         for i in range(self.batch_size):
             # Correction of the Q val for action used
-            if done[i]:
-                target[i][action[i]] = reward[i]
-            else:
+            # if done[i]:
+            #     target[i][action[i]] = reward[i]
+            # else:
                 # Standard DQN
                 # DQN chooses the max Q value among next action
                 # Selection and evaluation of action is on the target of Q Network
                 # Q_max = max_a' Q_target(s', a')
-                target[i][action[i]] = reward[i] + self.gamma * (np.amax(target_next[i]))
+            target[i][action[i]] = reward[i] + self.gamma * (np.amax(target_next[i]))
         # Train
         self.model.fit(state, target, batch_size=self.batch_size, verbose=0)
 
