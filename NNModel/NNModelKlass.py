@@ -1,4 +1,4 @@
-from keras.models import Model, load_model
+from keras.models import Model
 from keras.layers import Input, Dense
 from keras.optimizers import Adam, RMSprop
 
@@ -24,4 +24,5 @@ def NNModelKlasse(input_shape, action_space):
     model.compile(loss="mean_squared_error", optimizer=RMSprop(lr=0.00025, rho=0.95, epsilon=0.01), metrics=["accuracy"])
     model.summary()
     return model
+
 

@@ -1,6 +1,7 @@
 import numpy as np
 import pandas as pd
 from Agent import Agent
+from keras.models import load_model
 
 # from Exporter_Modul.Exporter_toCSV import Exporter_toCSV
 # from Environment_Modul.CliffEnvironment import CliffEnvironment
@@ -73,6 +74,22 @@ def trainNetwork(env, Agent, episodes):
                     return
             Agent.replay()
                 
+def testNetwork(env, agent, episodes):
+    agent.load("cartpole-dqn-tets.h5")
+    for episode in range(episodes):
+        state = env.reset()
+        state = np.reshape(state, [1, agent.state_size])
+        done = False
+        i = 0
+        while not done:
+            env.render()
+            action = np.argmax(agent.model.predict(state))
+            next_state, reward, done, _ = env.step(action)
+            state = np.reshape(next_state, [1, agent.state_size])
+            i =+ 1
+            if done:
+                    print("episode: {}/{}, score: {}".format(e, self.EPISODES, i))
+                    break
 
 
 if __name__ == '__main__':
