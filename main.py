@@ -40,9 +40,9 @@ def main():
                         TRAIN_START, NNModel)
 
 
-    trainNetwork(env, DQNAgent, EPISODES)
+    #trainNetwork(env, DQNAgent, EPISODES)
     #test_agent_actions(env, DQNAgent, EPISODES)
-
+    testNetwork(env,agent=DQNAgent,500)
 
 
 def trainNetwork(env, Agent, episodes):
@@ -88,7 +88,7 @@ def testNetwork(env, agent, episodes):
             state = np.reshape(next_state, [1, agent.state_size])
             i =+ 1
             if done:
-                    print("episode: {}/{}, score: {}".format(e, self.EPISODES, i))
+                    print("episode: {}/{}, score: {}".format(episode, episodes, i))
                     break
 
 
