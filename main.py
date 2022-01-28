@@ -2,6 +2,8 @@ import numpy as np
 import pandas as pd
 from Agent import Agent
 from keras.models import load_model
+from matplotlib import animation
+import matplotlib.pyplot as plt
 
 # from Exporter_Modul.Exporter_toCSV import Exporter_toCSV
 # from Environment_Modul.CliffEnvironment import CliffEnvironment
@@ -12,7 +14,8 @@ from Environment_Modul.CartPoleEnvironment import createEnvironment
 from NNModel.NNModelKlass import NNModelKlasse
 from Tests.tests import test_environment_variables
 from Tests.tests import test_agent_actions
-
+from Tests.tests import test_video
+from Tests.tests import test_video_git, mountainCarTest
 # Hyperparameters
 
 EPISODES = 1000
@@ -42,8 +45,8 @@ def main():
 
     #trainNetwork(env, DQNAgent, EPISODES)
     #test_agent_actions(env, DQNAgent, EPISODES)
-    testNetwork(env,agent=DQNAgent,500)
-
+    testNetwork(env, agent=DQNAgent, episodes=1)
+    #test_video_git(env)
 
 def trainNetwork(env, Agent, episodes):
     for episode in range(episodes):
@@ -76,6 +79,7 @@ def trainNetwork(env, Agent, episodes):
                 
 def testNetwork(env, agent, episodes):
     agent.load("cartpole-dqn-tets.h5")
+    #frames = []
     for episode in range(episodes):
         state = env.reset()
         state = np.reshape(state, [1, agent.state_size])
@@ -83,13 +87,31 @@ def testNetwork(env, agent, episodes):
         i = 0
         while not done:
             env.render()
+           # frames.append(env.render(mode="rgb_array"))
             action = np.argmax(agent.model.predict(state))
             next_state, reward, done, _ = env.step(action)
             state = np.reshape(next_state, [1, agent.state_size])
-            i =+ 1
+            i += 1
             if done:
-                    print("episode: {}/{}, score: {}".format(episode, episodes, i))
-                    break
+                print("episode: {}/{}, score: {}".format(episode, episodes, i))
+                #env.close()
+                #save_frames_as_gif(frames)
+                break
+    env.close()
+
+def save_frames_as_gif(frames, path='./', filename='gym_animation.gif'):
+
+    #Mess with this to change frame size
+    plt.figure(figsize=(frames[0].shape[1] / 72.0, frames[0].shape[0] / 72.0), dpi=72)
+
+    patch = plt.imshow(frames[0])
+    plt.axis('off')
+
+    def animate(i):
+        patch.set_data(frames[i])
+
+    anim = animation.FuncAnimation(plt.gcf(), animate, frames = len(frames), interval=50)
+    anim.save(path + filename, writer='imagemagick', fps=60)
 
 
 if __name__ == '__main__':
