@@ -10,7 +10,7 @@ import matplotlib.pyplot as plt
 # from Tests.TrajectoryTester import Trajectory
 # from Tests.EnvironmentTest import EnvironmentTester
 from Environment_Modul.CartPoleEnvironment import CartPoleEnvironment
-from Environment_Modul.CartPoleEnvironment import createEnvironment
+from Environment_Modul.CartPoleEnvironment import createCartPoleEnvironment
 from NNModel.NNModelKlass import NNModelKlasse
 from Tests.tests import test_environment_variables
 from Tests.tests import test_agent_actions
@@ -30,7 +30,7 @@ GAMMA = 0.98
 
 def main():
     # Environment creation
-    env, state_size, action_size = createEnvironment()
+    env, state_size, action_size = createCartPoleEnvironment()
 
     #test_environment_variables(env)
 
@@ -43,10 +43,10 @@ def main():
                         TRAIN_START, NNModel)
 
 
-    #trainNetwork(env, DQNAgent, EPISODES)
+    trainNetwork(env, DQNAgent, EPISODES)
     #test_agent_actions(env, DQNAgent, EPISODES)
-    testNetwork(env, agent=DQNAgent, episodes=1)
-    #test_video_git(env)
+    #testNetwork(env, agent=DQNAgent, episodes=1)
+    # mountainCarTest()
 
 def trainNetwork(env, Agent, episodes):
     for episode in range(episodes):
@@ -72,7 +72,7 @@ def trainNetwork(env, Agent, episodes):
                 print("episode: {}/{}, score: {}, e: {:.2}".format(episode, episodes , i, Agent.epsilon))
                 if i == env._max_episode_steps:
                     print("Saving trained model as cartpole-dqn.h5")
-                    Agent.save("cartpole-dqn-tets.h5")
+                    Agent.save("cartpole-dqn-tets_2.h5")
                     env.close()
                     return
             Agent.replay()

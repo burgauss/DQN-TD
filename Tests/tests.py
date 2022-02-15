@@ -62,4 +62,14 @@ def save_frames_as_gif(frames, path='./', filename='gym_animation.gif'):
 
 def mountainCarTest():
     env = gym.make('MountainCar-v0')
+    state = env.reset()
+    print(state)
+    action = 2
+    for i in range(1000):
+        env.render()
+        state, reward, done, _ = env.step(action)
+        print(state)
     
+    env.close()
+
+
