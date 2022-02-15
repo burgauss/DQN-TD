@@ -20,7 +20,7 @@ class Agent():
         # self.episodes = episodes
         self.batch_size = batch_size
         self.train_start = parametersDict['train_start']
-        self.memory = deque(maxlen=2000)
+        self.memory = deque(maxlen=5000)  #It was 2000
         self.gamma = parametersDict['gamma']
         
         #Model
