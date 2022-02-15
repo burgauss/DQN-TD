@@ -11,6 +11,7 @@ import matplotlib.pyplot as plt
 # from Tests.EnvironmentTest import EnvironmentTester
 from Environment_Modul.CartPoleEnvironment import CartPoleEnvironment
 from Environment_Modul.CartPoleEnvironment import createCartPoleEnvironment
+from Exporter_Modul.Exporter_toCSV import Exporter_toCSV
 from NNModel.NNModelKlass import NNModelKlasse
 from TestBench.testBench import testBenchCartPole
 from Tests.tests import test_environment_variables
@@ -79,7 +80,15 @@ def main():
     ###############################################
 
 def trainCartPoleNetwork(env, Agent, episodes, render_every, render_after_episode):
+    exporterRewards = Exporter_toCSV()
+    rewards_perEpisode = []
+    count_steps = 0
+    
     for episode in range(episodes):
+        if episode % render_every == 0:
+            averageReward = count_steps/render_every
+            rewards_perEpisode.append(averageReward)
+            count_steps = 0
         state = env.reset()
         state = np.reshape(state, [1, Agent.state_size])
         done = False
@@ -87,9 +96,11 @@ def trainCartPoleNetwork(env, Agent, episodes, render_every, render_after_episod
         while not done:
             if episode % render_every == 0 and episode > render_after_episode:
                 env.render()
+
             action = Agent.take_action(state)
             next_state, reward, done, _ = env.step(action)
             next_state = np.reshape(next_state, [1, Agent.state_size])
+            count_steps += 1
             #_max_episode_steps restricted to 200
             if not done or i == env._max_episode_steps-1:
                 reward = reward
@@ -99,14 +110,21 @@ def trainCartPoleNetwork(env, Agent, episodes, render_every, render_after_episod
             Agent.remember(state, action, reward, next_state, done)
             state = next_state
             i += 1
-            if done:
-                print("episode: {}/{}, score: {}, e: {:.2}".format(episode, episodes , i, Agent.epsilon))
+            # if done:
+            # print("episode: {}/{}, score: {}, e: {:.2}".format(episode, episodes , i, Agent.epsilon))
                 # if i == env._max_episode_steps:
                 #     print("Saving trained model as cartpole-dqn.h5")
                 #     Agent.save("cartpole-dqn-tets_2.h5")
                 #     env.close()
                 #     return
             Agent.replay()
+        
+        if episode % render_every == 0:
+            print("episode: " + str(episode) +" num_steps: " + str(count_steps) + 
+            " epsilon: " + str(Agent.epsilon))
+
+        exporterRewards.add_toCSV(rewards_perEpisode)
+        exporterRewards.create_csv("CartPolerewardsPerEpisode.csv",1)
                 
 def testNetwork(env, agent, episodes):
     agent.load("cartpole-dqn-tets.h5")
