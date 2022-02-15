@@ -4,7 +4,7 @@
 def testBenchCartPole(i):
     if i == 0:
        # print("starting test bench "+str(i))
-        alpha = 0.015
+        alpha = 0.015 #Wont be use here
         max_episodes = 200
         gamma = 0.98
         train_start = 500

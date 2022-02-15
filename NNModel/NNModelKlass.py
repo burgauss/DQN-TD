@@ -8,13 +8,13 @@ def NNModelKlasse(input_shape, action_space):
 
     # Using dense as the basic form of a neural network layer
     # Input Layer of state size and Hiden Layer with 512 nodes
-    X = Dense(128, input_shape=input_shape, activation="relu", 
+    X = Dense(512, input_shape=input_shape, activation="relu", 
             kernel_initializer='he_uniform')(X_input)
 #     X = Dense(512, input_shape=input_shape, activation="relu", 
 #             kernel_initializer='he_uniform')(X_input)
 
     # Hidden layer with 256 nodes
-    X = Dense(128, activation="relu", kernel_initializer='he_uniform')(X)
+    X = Dense(256, activation="relu", kernel_initializer='he_uniform')(X)
 #   X = Dense(256, activation="relu", kernel_initializer='he_uniform')(X)
 
     # Hidden layer with 64 nodes

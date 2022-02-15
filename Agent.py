@@ -20,7 +20,7 @@ class Agent():
         # self.episodes = episodes
         self.batch_size = batch_size
         self.train_start = parametersDict['train_start']
-        self.memory = deque(maxlen=5000)  #It was 2000
+        self.memory = deque(maxlen=2000) 
         self.gamma = parametersDict['gamma']
         
         #Model
@@ -45,7 +45,7 @@ class Agent():
         
         return action
 
-    def replay(self):
+    def replay(self, doFit):
         if len(self.memory) < self.train_start:
             return
         # Randomly sample minibatch from the memory
@@ -79,7 +79,8 @@ class Agent():
                 # Q_max = max_a' Q_target(s', a')
             target[i][action[i]] = reward[i] + self.gamma * (np.amax(target_next[i]))
         # Train
-        self.model.fit(state, target, batch_size=self.batch_size, verbose=0)
+        if doFit == True:
+            self.model.fit(state, target, batch_size=self.batch_size, verbose=0)
 
     def load(self, name):
         self.model = load_model(name)
