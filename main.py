@@ -33,26 +33,26 @@ BATCH_SIZE = 64
 
 def main():
     # If one then train
-    train = 0
+    train = 1
     ###############################################
     ###########Cart Pole Environment###############
     ###############################################
     # Environment creation
     env, state_size, action_size = createCartPoleEnvironment()
     
-    # NN creation
-    NNModel = NNModelKlasse(input_shape=(state_size,), action_space=action_size)
-    
     #Gettin parameters and training
     if train == 1:
-        for i in range(1):
+        for i in range(4):
             parameters = testBenchCartPole(i)
+            learning_rate = parameters['alpha']
             episodes = parameters['max_episodes']
             render_every = parameters['render_every']
             render_after_episode = parameters['render_after_episode']
+
+            NNModel = NNModelKlasse(input_shape=(state_size,), action_space=action_size, lr=learning_rate)
             DQNAgent = Agent(parameters, state_size, action_size, BATCH_SIZE,
                         NNModel)
-            trainCartPoleNetwork(env, DQNAgent, episodes, render_every, render_after_episode)
+            trainCartPoleNetwork(env, DQNAgent, episodes, render_every, render_after_episode, i)
     else:
         # Specify parameters for visualization
         parameters = testBenchCartPole(1)
@@ -80,11 +80,11 @@ def main():
     ###########Mountain Car Environment############
     ###############################################
 
-def trainCartPoleNetwork(env, Agent, episodes, render_every, render_after_episode):
+def trainCartPoleNetwork(env, Agent, episodes, render_every, render_after_episode, iteration):
     exporterRewards = Exporter_toCSV()
     rewards_perEpisode = []
     count_steps = 0
-    
+    trainAchieved = False
     for episode in range(episodes):
         if episode % render_every == 0:
             averageReward = count_steps/render_every
@@ -95,10 +95,10 @@ def trainCartPoleNetwork(env, Agent, episodes, render_every, render_after_episod
         done = False
         i = 0
         while not done:
-            if episode % render_every == 0 and episode > render_after_episode:
-                env.render()
+            # if episode % render_every == 0 and episode > render_after_episode:
+                #env.render()
 
-            action = Agent.take_action(state)
+            action = Agent.take_action(state, trainAchieved)
             next_state, reward, done, _ = env.step(action)
             next_state = np.reshape(next_state, [1, Agent.state_size])
             count_steps += 1
@@ -113,23 +113,27 @@ def trainCartPoleNetwork(env, Agent, episodes, render_every, render_after_episod
             i += 1
             if done:
                 print("episode: {}/{}, score: {}, e: {:.2}".format(episode, episodes , i, Agent.epsilon))
-                if i == env._max_episode_steps:
+                if i == env._max_episode_steps and trainAchieved == False:
                     print("Saving trained model as cartpole-dqn.h5")
-                    Agent.save("cartpole-dqn-tets_2.h5")
-                    env.close()
-                    return
+                    Agent.save("cartpole-dqn-test"+str(iteration)+".h5")
+                    trainAchieved = True
+                    Agent.epsilon = Agent.epsilon_min
+                    #env.close()
+                    #return
             # if done and episode % render_every == 0:
             #      Agent.replay(True)
             # else:
             #     Agent.replay(False)
-            Agent.replay(True)
+            Agent.replay(not trainAchieved)
         
         # if episode % render_every == 0:
         #     print("episode: " + str(episode) +" num_steps: " + str(count_steps) + 
         #     " epsilon: " + str(Agent.epsilon))
 
         exporterRewards.add_toCSV(rewards_perEpisode)
-        exporterRewards.create_csv("CartPolerewardsPerEpisode.csv",1)
+        exporterRewards.create_csv("CartPolerewardsPerEpisode"+str(iteration)+".csv",1)
+    
+    env.close()
                 
 def testNetwork(env, agent, episodes):
     agent.load("cartpole-dqn-tets_2.h5")

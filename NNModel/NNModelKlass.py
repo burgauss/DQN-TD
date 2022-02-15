@@ -3,7 +3,7 @@ from keras.layers import Input, Dense
 from keras.optimizers import Adam, RMSprop
 
 
-def NNModelKlasse(input_shape, action_space):
+def NNModelKlasse(input_shape, action_space, lr):
     X_input = Input(input_shape)
 
     # Using dense as the basic form of a neural network layer
@@ -25,7 +25,7 @@ def NNModelKlasse(input_shape, action_space):
 
     model = Model(inputs = X_input, outputs = X, name='CartPole_DQN_model')
     #model.compile(loss="mean_squared_error", optimizer=RMSprop(lr=0.00025, rho=0.95, epsilon=0.01), metrics=["accuracy"])
-    model.compile(loss="mean_squared_error", optimizer=RMSprop(lr=0.00025, rho=0.95, epsilon=0.01), metrics=["accuracy"])
+    model.compile(loss="mean_squared_error", optimizer=RMSprop(lr=lr, rho=0.95, epsilon=0.01), metrics=["accuracy"])
     model.summary()
     return model
 

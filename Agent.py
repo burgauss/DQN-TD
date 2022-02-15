@@ -37,8 +37,8 @@ class Agent():
         if self.epsilon > self.epsilon_min:
             self.epsilon *= self.epsilon_decay
 
-    def take_action(self, state): # Be greedy
-        if self.epsilon > np.random.random():
+    def take_action(self, state, trainAchieved): # Be greedy
+        if self.epsilon > np.random.random() and trainAchieved == False:
             action = np.random.randint(0,self.action_size)
         else:
             action = np.argmax(self.model.predict(state))
@@ -50,36 +50,35 @@ class Agent():
             return
         # Randomly sample minibatch from the memory
         # Minibatch of size min(len(memory)) or batch size
-
-        minibatch = random.sample(self.memory, min(len(self.memory), self.batch_size))
-        state = np.zeros((self.batch_size, self.state_size))
-        next_state = np.zeros((self.batch_size, self.state_size)) # matrix
-        action, reward, done = [], [], []
-
-        # before prediction
-        for i in range(self.batch_size):
-            state[i] = minibatch[i][0]
-            action.append(minibatch[i][1])
-            reward.append(minibatch[i][2])
-            next_state[i] = minibatch[i][3]
-            done.append(minibatch[i][4])
-        
-        # Batch prediction
-        target = self.model.predict(state)
-        target_next = self.model.predict(next_state)
-
-        for i in range(self.batch_size):
-            # Correction of the Q val for action used
-            # if done[i]:
-            #     target[i][action[i]] = reward[i]
-            # else:
-                # Standard DQN
-                # DQN chooses the max Q value among next action
-                # Selection and evaluation of action is on the target of Q Network
-                # Q_max = max_a' Q_target(s', a')
-            target[i][action[i]] = reward[i] + self.gamma * (np.amax(target_next[i]))
-        # Train
         if doFit == True:
+            minibatch = random.sample(self.memory, min(len(self.memory), self.batch_size))
+            state = np.zeros((self.batch_size, self.state_size))
+            next_state = np.zeros((self.batch_size, self.state_size)) # matrix
+            action, reward, done = [], [], []
+
+            # before prediction
+            for i in range(self.batch_size):
+                state[i] = minibatch[i][0]
+                action.append(minibatch[i][1])
+                reward.append(minibatch[i][2])
+                next_state[i] = minibatch[i][3]
+                done.append(minibatch[i][4])
+            
+            # Batch prediction
+            target = self.model.predict(state)
+            target_next = self.model.predict(next_state)
+
+            for i in range(self.batch_size):
+                # Correction of the Q val for action used
+                # if done[i]:
+                #     target[i][action[i]] = reward[i]
+                # else:
+                    # Standard DQN
+                    # DQN chooses the max Q value among next action
+                    # Selection and evaluation of action is on the target of Q Network
+                    # Q_max = max_a' Q_target(s', a')
+                target[i][action[i]] = reward[i] + self.gamma * (np.amax(target_next[i]))
+            # Train
             self.model.fit(state, target, batch_size=self.batch_size, verbose=0)
 
     def load(self, name):
