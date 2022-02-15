@@ -43,12 +43,12 @@ def main():
                         TRAIN_START, NNModel)
 
 
-    trainNetwork(env, DQNAgent, EPISODES)
+    trainCartPoleNetwork(env, DQNAgent, EPISODES)
     #test_agent_actions(env, DQNAgent, EPISODES)
     #testNetwork(env, agent=DQNAgent, episodes=1)
     # mountainCarTest()
 
-def trainNetwork(env, Agent, episodes):
+def trainCartPoleNetwork(env, Agent, episodes):
     for episode in range(episodes):
         state = env.reset()
         state = np.reshape(state, [1, Agent.state_size])
