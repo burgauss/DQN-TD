@@ -4,16 +4,16 @@
 def testBenchCartPole(i):
     if i == 0:
        # print("starting test bench "+str(i))
-        alpha = 0.015 #Wont be use here
-        max_episodes = 200
+        alpha = 0.00025 
+        max_episodes = 60
         gamma = 0.98
         train_start = 500
         epsilon_decay = 0.999
         epsilon_min = 0.001
         #start_greedy_episode = 10000
         #episondes_of_greedynes = 5000
-        render_every = 10
-        render_after_episode = 10
+        render_every = 1
+        render_after_episode = 0
         epsilon_start = 1.0
         #epsilon_decrease_factor = epsilon_start/(max_episodes - start_greedy_episode - episondes_of_greedynes)
 
@@ -25,17 +25,17 @@ def testBenchCartPole(i):
         return parameters
     elif i == 1:
         #print("starting test bench "+str(i))
-        alpha = 0.015
-        max_episodes = 80000
-        gamma = 0.96
+        alpha = 0.00025 
+        max_episodes = 60
+        gamma = 0.95
         train_start = 500
         epsilon_decay = 0.999
         epsilon_min = 0.001
         #start_greedy_episode = 10000
         #episondes_of_greedynes = 5000
-        render_every = 1000
-        render_after_episode = max_episodes//2
-        epsilon_start = 1
+        render_every = 1
+        render_after_episode = 0
+        epsilon_start = 1.0
         #epsilon_decrease_factor = epsilon_start/(max_episodes - start_greedy_episode - episondes_of_greedynes)
 
         parameters = {"alpha":alpha,"gamma":gamma,"max_episodes":max_episodes,"train_start":train_start,
@@ -45,17 +45,17 @@ def testBenchCartPole(i):
 
         return parameters
     elif i == 2:
-        alpha = 0.015
-        max_episodes = 80000
-        gamma = 0.96
+        alpha = 0.001 
+        max_episodes = 60
+        gamma = 0.98
         train_start = 500
-        epsilon_decay = 0.999
+        epsilon_decay = 0.998
         epsilon_min = 0.001
         #start_greedy_episode = 10000
         #episondes_of_greedynes = 5000
-        render_every = 1000
-        render_after_episode = max_episodes//2
-        epsilon_start = 1
+        render_every = 1
+        render_after_episode = 0
+        epsilon_start = 1.0
         #epsilon_decrease_factor = epsilon_start/(max_episodes - start_greedy_episode - episondes_of_greedynes)
 
         parameters = {"alpha":alpha,"gamma":gamma,"max_episodes":max_episodes,"train_start":train_start,
@@ -65,17 +65,17 @@ def testBenchCartPole(i):
 
         return parameters
     elif i == 3:
-        alpha = 0.015
-        max_episodes = 80000
-        gamma = 0.96
+        alpha = 0.0015 #Wont be use here
+        max_episodes = 50
+        gamma = 0.98
         train_start = 500
-        epsilon_decay = 0.999
+        epsilon_decay = 0.998
         epsilon_min = 0.001
         #start_greedy_episode = 10000
         #episondes_of_greedynes = 5000
-        render_every = 1000
-        render_after_episode = max_episodes//2
-        epsilon_start = 1
+        render_every = 1
+        render_after_episode = 0
+        epsilon_start = 1.0
         #epsilon_decrease_factor = epsilon_start/(max_episodes - start_greedy_episode - episondes_of_greedynes)
 
         parameters = {"alpha":alpha,"gamma":gamma,"max_episodes":max_episodes,"train_start":train_start,
