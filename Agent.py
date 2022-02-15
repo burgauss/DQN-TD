@@ -5,28 +5,21 @@ import random
 
 class Agent():
 
-    def __init__(self, parametersDict, state_space, action_space, epsilon_min, epsilon_decay,
-                                    batch_size, Model):
-        
-        # getting information from dictionary
-        render_every = parametersDict['render_every']
-        render_after_episode = parametersDict['render_after_episode']
-        epsilon_decrease_factor = parametersDict['epsilon_decrease_factor']
-        
-        
+    def __init__(self, parametersDict, state_space, action_space, batch_size, Model):
+                
         # Environment parameters
         self.state_size = state_space
         self.action_size = action_space
         
         #E-greedy parameters
         self.epsilon = parametersDict['epsilon_start']
-        self.epsilon_min = epsilon_min
-        self.epsilon_decay = epsilon_decay
+        self.epsilon_min = parametersDict['epsilon_min']
+        self.epsilon_decay = parametersDict['epsilon_decay']
 
         #Train parameters
         # self.episodes = episodes
         self.batch_size = batch_size
-        self.train_start = parametersDict['start_greedy_episode']
+        self.train_start = parametersDict['train_start']
         self.memory = deque(maxlen=2000)
         self.gamma = parametersDict['gamma']
         

@@ -24,14 +24,15 @@ from Tests.tests import test_video_git, mountainCarTest
 # EPSILON = 1.0   # exploration rate
 # EPSILON_MIN = .001
 # EPSILON_DECAY = 0.999
-# BATCH_SIZE = 64
+BATCH_SIZE = 64
 # TRAIN_START = 500
 # GAMMA = 0.98
 #########################
 
 
 def main():
-
+    # If one then train
+    train = 1
     ###############################################
     ###########Cart Pole Environment###############
     ###############################################
@@ -42,21 +43,31 @@ def main():
     NNModel = NNModelKlasse(input_shape=(state_size,), action_space=action_size)
     
     #Gettin parameters and training
-    for i in range(1):
-        parameters = testBenchCartPole(i)
-        episodes = parameters['max_episodes']
-        DQNAgent = Agent(parameters, state_size, action_size,
-                    EPSILON_MIN, EPSILON_DECAY, BATCH_SIZE,
-                    NNModel)
-        trainCartPoleNetwork(env, DQNAgent, episodes)
-
+    if train == 1:
+        for i in range(1):
+            parameters = testBenchCartPole(i)
+            episodes = parameters['max_episodes']
+            render_every = parameters['render_every']
+            render_after_episode = parameters['render_after_episode']
+            DQNAgent = Agent(parameters, state_size, action_size, BATCH_SIZE,
+                        NNModel)
+            trainCartPoleNetwork(env, DQNAgent, episodes, render_every, render_after_episode)
+    else:
+        # Specify parameters for visualization
+        parameters = testBenchCartPole(1)
+        DQNAgent = Agent(parameters, state_size, action_size, BATCH_SIZE,
+            NNModel)
+        testNetwork(env, agent=DQNAgent, episodes=1)
+    #############Old modifications
     # Agent Creation
-    DQNAgent = Agent(state_size, action_size, GAMMA, EPSILON,
-                        EPSILON_MIN, EPSILON_DECAY, BATCH_SIZE,
-                        TRAIN_START, NNModel)
+    # DQNAgent = Agent(state_size, action_size, GAMMA, EPSILON,
+    #                     EPSILON_MIN, EPSILON_DECAY, BATCH_SIZE,
+    #                     TRAIN_START, NNModel)
 
 
-    trainCartPoleNetwork(env, DQNAgent, EPISODES)
+    # trainCartPoleNetwork(env, DQNAgent, EPISODES)
+
+
     #testNetwork(env, agent=DQNAgent, episodes=1)
 
     ###############################################
@@ -67,14 +78,15 @@ def main():
     ###########Mountain Car Environment############
     ###############################################
 
-def trainCartPoleNetwork(env, Agent, episodes):
+def trainCartPoleNetwork(env, Agent, episodes, render_every, render_after_episode):
     for episode in range(episodes):
         state = env.reset()
         state = np.reshape(state, [1, Agent.state_size])
         done = False
         i = 0
         while not done:
-            env.render()
+            if episode % render_every == 0 and episode > render_after_episode:
+                env.render()
             action = Agent.take_action(state)
             next_state, reward, done, _ = env.step(action)
             next_state = np.reshape(next_state, [1, Agent.state_size])
@@ -89,11 +101,11 @@ def trainCartPoleNetwork(env, Agent, episodes):
             i += 1
             if done:
                 print("episode: {}/{}, score: {}, e: {:.2}".format(episode, episodes , i, Agent.epsilon))
-                if i == env._max_episode_steps:
-                    print("Saving trained model as cartpole-dqn.h5")
-                    Agent.save("cartpole-dqn-tets_2.h5")
-                    env.close()
-                    return
+                # if i == env._max_episode_steps:
+                #     print("Saving trained model as cartpole-dqn.h5")
+                #     Agent.save("cartpole-dqn-tets_2.h5")
+                #     env.close()
+                #     return
             Agent.replay()
                 
 def testNetwork(env, agent, episodes):
