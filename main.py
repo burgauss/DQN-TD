@@ -12,31 +12,44 @@ import matplotlib.pyplot as plt
 from Environment_Modul.CartPoleEnvironment import CartPoleEnvironment
 from Environment_Modul.CartPoleEnvironment import createCartPoleEnvironment
 from NNModel.NNModelKlass import NNModelKlasse
+from TestBench.testBench import testBenchCartPole
 from Tests.tests import test_environment_variables
 from Tests.tests import test_agent_actions
 from Tests.tests import test_video
 from Tests.tests import test_video_git, mountainCarTest
+
 # Hyperparameters
 
-EPISODES = 1000
-EPSILON = 1.0   # exploration rate
-EPSILON_MIN = .001
-EPSILON_DECAY = 0.999
-BATCH_SIZE = 64
-TRAIN_START = 500
-GAMMA = 0.98
+# EPISODES = 1000
+# EPSILON = 1.0   # exploration rate
+# EPSILON_MIN = .001
+# EPSILON_DECAY = 0.999
+# BATCH_SIZE = 64
+# TRAIN_START = 500
+# GAMMA = 0.98
 #########################
 
 
 def main():
+
+    ###############################################
+    ###########Cart Pole Environment###############
+    ###############################################
     # Environment creation
     env, state_size, action_size = createCartPoleEnvironment()
-
-    #test_environment_variables(env)
-
+    
     # NN creation
     NNModel = NNModelKlasse(input_shape=(state_size,), action_space=action_size)
     
+    #Gettin parameters and training
+    for i in range(1):
+        parameters = testBenchCartPole(i)
+        episodes = parameters['max_episodes']
+        DQNAgent = Agent(parameters, state_size, action_size,
+                    EPSILON_MIN, EPSILON_DECAY, BATCH_SIZE,
+                    NNModel)
+        trainCartPoleNetwork(env, DQNAgent, episodes)
+
     # Agent Creation
     DQNAgent = Agent(state_size, action_size, GAMMA, EPSILON,
                         EPSILON_MIN, EPSILON_DECAY, BATCH_SIZE,
@@ -44,9 +57,15 @@ def main():
 
 
     trainCartPoleNetwork(env, DQNAgent, EPISODES)
-    #test_agent_actions(env, DQNAgent, EPISODES)
     #testNetwork(env, agent=DQNAgent, episodes=1)
-    # mountainCarTest()
+
+    ###############################################
+    ###########End Cart Pole Environment###########
+    ###############################################
+
+    ###############################################
+    ###########Mountain Car Environment############
+    ###############################################
 
 def trainCartPoleNetwork(env, Agent, episodes):
     for episode in range(episodes):
