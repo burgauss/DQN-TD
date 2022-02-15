@@ -59,6 +59,7 @@ def main():
         DQNAgent = Agent(parameters, state_size, action_size, BATCH_SIZE,
             NNModel)
         testNetwork(env, agent=DQNAgent, episodes=1)
+    
     #############Old modifications
     # Agent Creation
     # DQNAgent = Agent(state_size, action_size, GAMMA, EPSILON,
