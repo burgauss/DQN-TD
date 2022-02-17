@@ -92,7 +92,7 @@ def testBenchMountainCar(i):
     if i == 0:
        # print("starting test bench "+str(i))
         alpha = 0.0025 
-        max_episodes = 80
+        max_episodes = 300
         gamma = 0.99
         train_start = 1000
         epsilon_decay = 0.999
@@ -112,11 +112,11 @@ def testBenchMountainCar(i):
         return parameters
     elif i == 1:
         #print("starting test bench "+str(i))
-        alpha = 0.00025 
-        max_episodes = 60
+        alpha = 0.0025 
+        max_episodes = 300
         gamma = 0.95
-        train_start = 500
-        epsilon_decay = 0.999
+        train_start = 1000
+        epsilon_decay = 0.9999
         epsilon_min = 0.001
         #start_greedy_episode = 10000
         #episondes_of_greedynes = 5000
@@ -132,11 +132,11 @@ def testBenchMountainCar(i):
 
         return parameters
     elif i == 2:
-        alpha = 0.001 
-        max_episodes = 60
+        alpha = 0.0001 
+        max_episodes = 3000
         gamma = 0.98
-        train_start = 500
-        epsilon_decay = 0.998
+        train_start = 1000
+        epsilon_decay = 0.9999
         epsilon_min = 0.001
         #start_greedy_episode = 10000
         #episondes_of_greedynes = 5000
@@ -152,11 +152,11 @@ def testBenchMountainCar(i):
 
         return parameters
     elif i == 3:
-        alpha = 0.0015 #Wont be use here
-        max_episodes = 50
+        alpha = 0.015 #Wont be use here
+        max_episodes = 400
         gamma = 0.98
         train_start = 500
-        epsilon_decay = 0.998
+        epsilon_decay = 0.9999
         epsilon_min = 0.001
         #start_greedy_episode = 10000
         #episondes_of_greedynes = 5000

@@ -75,7 +75,7 @@ def main():
     
     #Gettin parameters and training
     if train == 1:
-        for i in range(1):
+        for i in range(4):
             parameters = testBenchMountainCar(i)
             learning_rate = parameters['alpha']
             episodes = parameters['max_episodes']
