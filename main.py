@@ -9,11 +9,11 @@ import matplotlib.pyplot as plt
 # from Environment_Modul.CliffEnvironment import CliffEnvironment
 # from Tests.TrajectoryTester import Trajectory
 # from Tests.EnvironmentTest import EnvironmentTester
-from Environment_Modul.CartPoleEnvironment import CartPoleEnvironment
+from Environment_Modul.CartPoleEnvironment import CartPoleEnvironment, createMountainCarEnvironment
 from Environment_Modul.CartPoleEnvironment import createCartPoleEnvironment
 from Exporter_Modul.Exporter_toCSV import Exporter_toCSV
 from NNModel.NNModelKlass import NNModelKlasse
-from TestBench.testBench import testBenchCartPole
+from TestBench.testBench import testBenchCartPole, testBenchMountainCar
 from Tests.tests import test_environment_variables
 from Tests.tests import test_agent_actions
 from Tests.tests import test_video
@@ -37,6 +37,7 @@ def main():
     ###############################################
     ###########Cart Pole Environment###############
     ###############################################
+    """
     # Environment creation
     env, state_size, action_size = createCartPoleEnvironment()
     
@@ -59,7 +60,7 @@ def main():
         DQNAgent = Agent(parameters, state_size, action_size, BATCH_SIZE,
             NNModel)
         testNetwork(env, agent=DQNAgent, episodes=10)
-    
+    """
 
     ###############################################
     ###########End Cart Pole Environment###########
@@ -68,6 +69,30 @@ def main():
     ###############################################
     ###########Mountain Car Environment############
     ###############################################
+
+    # Environment creation
+    env, state_size, action_size = createMountainCarEnvironment()
+    
+    #Gettin parameters and training
+    if train == 1:
+        for i in range(1):
+            parameters = testBenchMountainCar(i)
+            learning_rate = parameters['alpha']
+            episodes = parameters['max_episodes']
+            render_every = parameters['render_every']
+            render_after_episode = parameters['render_after_episode']
+
+            NNModel = NNModelKlasse(input_shape=(state_size,), action_space=action_size, lr=learning_rate)
+            DQNAgent = Agent(parameters, state_size, action_size, BATCH_SIZE,
+                        NNModel)
+            trainMountainCarNetwork(env, DQNAgent, episodes, render_every, render_after_episode, i)
+    else:
+        # Specify parameters for visualization
+        parameters = testBenchCartPole(1)
+        DQNAgent = Agent(parameters, state_size, action_size, BATCH_SIZE,
+            NNModel)
+        testNetwork(env, agent=DQNAgent, episodes=10)
+
 
     ###############################################
     ###########Mountain Car Environment############
@@ -144,27 +169,30 @@ def trainMountainCarNetwork(env, Agent, episodes, render_every, render_after_epi
         done = False
         i = 0
         while not done:
-            # if episode % render_every == 0 and episode > render_after_episode:
-                #env.render()
+            if episode % render_every == 0 and episode > render_after_episode:
+                env.render()
 
             action = Agent.take_action(state, trainAchieved)
             next_state, reward, done, _ = env.step(action)
             next_state = np.reshape(next_state, [1, Agent.state_size])
             count_steps += 1
             #_max_episode_steps restricted to 200
-            if not done or i == env._max_episode_steps-1:
-                reward = reward
+            if done and i >= env._max_episode_steps-1:
+                # if done the punishment is -100 and we took all the steps
+                pseudoreward = -100
+                Agent.remember(state, action, pseudoreward, next_state, done)
             else:
-                # if done the punishment is -100
-                reward = -100
-            Agent.remember(state, action, reward, next_state, done)
+                Agent.remember(state, action, reward, next_state, done)
+            
+            # Agent.remember(state, action, reward, next_state, done)
             state = next_state
             i += 1
             if done:
                 print("episode: {}/{}, score: {}, e: {:.2}".format(episode, episodes , i, Agent.epsilon))
-                if i == env._max_episode_steps and trainAchieved == False:
-                    print("Saving trained model as cartpole-dqn.h5")
-                    Agent.save("cartpole-dqn-test"+str(iteration)+".h5")
+                #We save when we achieved a reward of -150
+                if i <= env._max_episode_steps-50 and trainAchieved == False:
+                    print("Saving trained model as mountainCar-dqn.h5")
+                    Agent.save("mountainCar-dqn"+str(iteration)+".h5")
                     trainAchieved = True
                     Agent.epsilon = Agent.epsilon_min
                     #env.close()
@@ -179,8 +207,8 @@ def trainMountainCarNetwork(env, Agent, episodes, render_every, render_after_epi
         #     print("episode: " + str(episode) +" num_steps: " + str(count_steps) + 
         #     " epsilon: " + str(Agent.epsilon))
 
-        exporterRewards.add_toCSV(rewards_perEpisode)
-        exporterRewards.create_csv("CartPolerewardsPerEpisode"+str(iteration)+".csv",1)
+        #exporterRewards.add_toCSV(rewards_perEpisode)
+        #exporterRewards.create_csv("CartPolerewardsPerEpisode"+str(iteration)+".csv",1)
     
     env.close() 
 

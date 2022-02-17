@@ -12,3 +12,9 @@ def createCartPoleEnvironment():
     state_size = env.observation_space.shape[0]
     action_size = env.action_space.n
     return env, state_size, action_size
+
+def createMountainCarEnvironment():
+    env = gym.make('MountainCar-v0')
+    state_size = env.observation_space.shape[0]
+    action_size = env.action_space.n
+    return env, state_size, action_size
