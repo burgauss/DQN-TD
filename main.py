@@ -5,10 +5,7 @@ from keras.models import load_model
 from matplotlib import animation
 import matplotlib.pyplot as plt
 
-# from Exporter_Modul.Exporter_toCSV import Exporter_toCSV
-# from Environment_Modul.CliffEnvironment import CliffEnvironment
-# from Tests.TrajectoryTester import Trajectory
-# from Tests.EnvironmentTest import EnvironmentTester
+
 from Environment_Modul.CartPoleEnvironment import CartPoleEnvironment, createMountainCarEnvironment
 from Environment_Modul.CartPoleEnvironment import createCartPoleEnvironment
 from Exporter_Modul.Exporter_toCSV import Exporter_toCSV
@@ -169,8 +166,8 @@ def trainMountainCarNetwork(env, Agent, episodes, render_every, render_after_epi
         done = False
         i = 0
         while not done:
-            if episode % render_every == 0 and episode > render_after_episode:
-                env.render()
+            # if episode % render_every == 0 and episode > render_after_episode:
+            #     env.render()
 
             action = Agent.take_action(state, trainAchieved)
             next_state, reward, done, _ = env.step(action)
