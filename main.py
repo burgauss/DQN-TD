@@ -30,7 +30,7 @@ BATCH_SIZE = 64
 
 def main():
     # If one then train
-    train = 1
+    train = 0
     ###############################################
     ###########Cart Pole Environment###############
     ###############################################
@@ -86,6 +86,8 @@ def main():
     else:
         # Specify parameters for visualization
         parameters = testBenchCartPole(1)
+        learning_rate = parameters['alpha']
+        NNModel = NNModelKlasse(input_shape=(state_size,), action_space=action_size, lr=learning_rate)
         DQNAgent = Agent(parameters, state_size, action_size, BATCH_SIZE,
             NNModel)
         testNetwork(env, agent=DQNAgent, episodes=10)
@@ -210,7 +212,8 @@ def trainMountainCarNetwork(env, Agent, episodes, render_every, render_after_epi
     env.close() 
 
 def testNetwork(env, agent, episodes):
-    agent.load("cartpole-dqn-tets_2.h5")
+    # agent.load("cartpole-dqn-tets_2.h5")
+    agent.load("mountainCar-dqn3.h5")
     #frames = []
     for episode in range(episodes):
         state = env.reset()
