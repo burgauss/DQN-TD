@@ -92,10 +92,10 @@ def testBenchMountainCar(i):
     if i == 0:
        # print("starting test bench "+str(i))
         alpha = 0.0025 
-        max_episodes = 300
+        max_episodes = 1#  300
         gamma = 0.99
         train_start = 1000
-        epsilon_decay = 0.999
+        epsilon_decay = 0.9999
         epsilon_min = 0.001
         #start_greedy_episode = 10000
         #episondes_of_greedynes = 5000
