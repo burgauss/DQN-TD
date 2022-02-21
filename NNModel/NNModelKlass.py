@@ -25,7 +25,7 @@ def NNModelKlasse(input_shape, action_space, lr):
 
     model = Model(inputs = X_input, outputs = X, name='CartPole_DQN_model')
     #model.compile(loss="mean_squared_error", optimizer=RMSprop(lr=0.00025, rho=0.95, epsilon=0.01), metrics=["accuracy"])
-    model.compile(loss="mean_squared_error", optimizer=RMSprop(lr=lr, rho=0.95, epsilon=0.01), metrics=["accuracy"])
+    model.compile(loss="mean_squared_error", optimizer=RMSprop(learning_rate=lr, rho=0.95, epsilon=0.01), metrics=["accuracy"])
     model.summary()
     return model
 
