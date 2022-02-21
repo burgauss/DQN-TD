@@ -154,6 +154,7 @@ def trainCartPoleNetwork(env, Agent, episodes, render_every, render_after_episod
 
  
 def trainMountainCarNetwork(env, Agent, episodes, render_every, render_after_episode, iteration):
+    max_position = -99
     exporterRewards = Exporter_toCSV()
     rewards_perEpisode = []
     count_steps = 0
@@ -175,13 +176,16 @@ def trainMountainCarNetwork(env, Agent, episodes, render_every, render_after_epi
             next_state, reward, done, _ = env.step(action)
             next_state = np.reshape(next_state, [1, Agent.state_size])
             count_steps += 1
+            
+            #Keeping track of maximun position
+            if next_state[0][0] > max_position:
+                max_position = next_state[0][0]
+            
+            if next_state[0][0] >= 0.5:  #If car achieved the limit
+                reward += 10
             #_max_episode_steps restricted to 200
-            if done and i >= env._max_episode_steps-1:
-                # if done the punishment is -100 and we took all the steps
-                pseudoreward = -100
-                Agent.remember(state, action, pseudoreward, next_state, done)
-            else:
-                Agent.remember(state, action, reward, next_state, done)
+ 
+            Agent.remember(state, action, reward, next_state, done)
             
             # Agent.remember(state, action, reward, next_state, done)
             state = next_state
