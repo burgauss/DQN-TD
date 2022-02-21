@@ -91,8 +91,8 @@ def testBenchCartPole(i):
 def testBenchMountainCar(i):
     if i == 0:
        # print("starting test bench "+str(i))
-        alpha = 0.0025 
-        max_episodes = 1#  300
+        alpha = 0.001
+        max_episodes = 400#  300
         gamma = 0.99
         train_start = 1000
         epsilon_decay = 0.9999

@@ -30,7 +30,7 @@ BATCH_SIZE = 64
 
 def main():
     # If one then train
-    train = 0
+    train = 1
     ###############################################
     ###########Cart Pole Environment###############
     ###############################################
@@ -72,7 +72,7 @@ def main():
     
     #Gettin parameters and training
     if train == 1:
-        for i in range(4):
+        for i in range(1):
             parameters = testBenchMountainCar(i)
             learning_rate = parameters['alpha']
             episodes = parameters['max_episodes']
@@ -154,7 +154,6 @@ def trainCartPoleNetwork(env, Agent, episodes, render_every, render_after_episod
 
  
 def trainMountainCarNetwork(env, Agent, episodes, render_every, render_after_episode, iteration):
-    max_position = -99
     exporterRewards = Exporter_toCSV()
     rewards_perEpisode = []
     count_steps = 0
@@ -164,6 +163,8 @@ def trainMountainCarNetwork(env, Agent, episodes, render_every, render_after_epi
             averageReward = count_steps/render_every
             rewards_perEpisode.append(averageReward)
             count_steps = 0
+        
+        max_position = -99
         state = env.reset()
         state = np.reshape(state, [1, Agent.state_size])
         done = False
