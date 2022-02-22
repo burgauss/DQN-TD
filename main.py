@@ -30,7 +30,7 @@ BATCH_SIZE = 64
 
 def main():
     # If one then train
-    train = 1
+    train = 0
     ###############################################
     ###########Cart Pole Environment###############
     ###############################################
@@ -71,8 +71,8 @@ def main():
     env, state_size, action_size = createMountainCarEnvironment()
     
     #Gettin parameters and training
-    if train == 1:
-        for i in range(1):
+    if train == 0:
+        for i in range(4):
             parameters = testBenchMountainCar(i)
             learning_rate = parameters['alpha']
             episodes = parameters['max_episodes']
@@ -85,7 +85,7 @@ def main():
             trainMountainCarNetwork(env, DQNAgent, episodes, render_every, render_after_episode, i)
     else:
         # Specify parameters for visualization
-        parameters = testBenchCartPole(1)
+        parameters = testBenchMountainCar(0)
         learning_rate = parameters['alpha']
         NNModel = NNModelKlasse(input_shape=(state_size,), action_space=action_size, lr=learning_rate)
         DQNAgent = Agent(parameters, state_size, action_size, BATCH_SIZE,
@@ -196,9 +196,9 @@ def trainMountainCarNetwork(env, Agent, episodes, render_every, render_after_epi
                 #We save when we achieved a reward of -150
                 if i <= env._max_episode_steps-50 and trainAchieved == False:
                     print("Saving trained model as mountainCar-dqn.h5")
-                    Agent.save("mountainCar-dqn"+str(iteration)+".h5")
+                    Agent.save("mountainCar-dqn"+str(iteration)+str(episode)+".h5")
                     #trainAchieved = True
-                    Agent.epsilon = Agent.epsilon_min
+                    #Agent.epsilon = Agent.epsilon_min
                     #env.close()
                     #return
             # if done and episode % render_every == 0:
@@ -211,14 +211,14 @@ def trainMountainCarNetwork(env, Agent, episodes, render_every, render_after_epi
         #     print("episode: " + str(episode) +" num_steps: " + str(count_steps) + 
         #     " epsilon: " + str(Agent.epsilon))
 
-        #exporterRewards.add_toCSV(rewards_perEpisode)
-        #exporterRewards.create_csv("CartPolerewardsPerEpisode"+str(iteration)+".csv",1)
+        exporterRewards.add_toCSV(rewards_perEpisode)
+        exporterRewards.create_csv("CartPolerewardsPerEpisode"+str(iteration)+".csv",1)
     
     env.close() 
 
 def testNetwork(env, agent, episodes):
     # agent.load("cartpole-dqn-tets_2.h5")
-    agent.load("mountainCar-dqn3.h5")
+    agent.load("mountainCar-dqn0.h5")
     #frames = []
     for episode in range(episodes):
         state = env.reset()
