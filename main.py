@@ -29,7 +29,7 @@ BATCH_SIZE = 64
 
 
 def main():
-    # If one then train
+    # If 0 then train
     train = 0
     ###############################################
     ###########Cart Pole Environment###############
@@ -211,8 +211,8 @@ def trainMountainCarNetwork(env, Agent, episodes, render_every, render_after_epi
         #     print("episode: " + str(episode) +" num_steps: " + str(count_steps) + 
         #     " epsilon: " + str(Agent.epsilon))
 
-        exporterRewards.add_toCSV(rewards_perEpisode)
-        exporterRewards.create_csv("CartPolerewardsPerEpisode"+str(iteration)+".csv",1)
+    exporterRewards.add_toCSV(rewards_perEpisode)
+    exporterRewards.create_csv("CartPolerewardsPerEpisode"+str(iteration)+".csv",1)
     
     env.close() 
 
