@@ -222,53 +222,30 @@ def trainOneQuadrant(env, Agent, episodes, render_every, render_after_episode, i
     rewards_perEpisode = []
     count_steps = 0
     trainAchieved = False
+    
     for episode in range(episodes):
-        if episode % render_every == 0:
+        if episode % render_every == 0:     #use to get the average reward
             averageReward = count_steps/render_every
             rewards_perEpisode.append(averageReward)
             count_steps = 0
-        
-        max_position = -99
+        episode_reward = 0
         state = env.reset()
         state = np.reshape(state, [1, Agent.state_size])
         done = False
         i = 0
         while not done:
-            # if episode % render_every == 0 and episode > render_after_episode:
-            #     env.render()
-
             action = Agent.take_action(state, trainAchieved)
             next_state, reward, done, _ = env.step(action)
             next_state = np.reshape(next_state, [1, Agent.state_size])
             count_steps += 1
-            
-            #Keeping track of maximun position
-            if next_state[0][0] > max_position:
-                max_position = next_state[0][0]
-            
-            if next_state[0][0] >= 0.5:  #If car achieved the limit
-                reward += 10
-            #_max_episode_steps restricted to 200
- 
+            episode_reward += reward
             Agent.remember(state, action, reward, next_state, done)
-            
-            # Agent.remember(state, action, reward, next_state, done)
             state = next_state
             i += 1
             if done:
-                print("episode: {}/{}, score: {}, e: {:.2}".format(episode, episodes , i, Agent.epsilon))
-                #We save when we achieved a reward of -150
-                if i <= env._max_episode_steps-50 and trainAchieved == False:
-                    print("Saving trained model as mountainCar-dqn.h5")
-                    Agent.save("mountainCar-dqn"+str(iteration)+str(episode)+".h5")
-                    #trainAchieved = True
-                    #Agent.epsilon = Agent.epsilon_min
-                    #env.close()
-                    #return
-            # if done and episode % render_every == 0:
-            #      Agent.replay(True)
-            # else:
-            #     Agent.replay(False)
+                print("episode: {}/{}, score: {}, e: {:.2}, ep_reward: {}".format(episode, episodes , i,
+                                                                 Agent.epsilon, episode_reward))
+
             Agent.replay(not trainAchieved)
         
         # if episode % render_every == 0:
