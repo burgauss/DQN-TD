@@ -217,6 +217,68 @@ def trainMountainCarNetwork(env, Agent, episodes, render_every, render_after_epi
     
     env.close() 
 
+def trainOneQuadrant(env, Agent, episodes, render_every, render_after_episode, iteration):
+    exporterRewards = Exporter_toCSV()
+    rewards_perEpisode = []
+    count_steps = 0
+    trainAchieved = False
+    for episode in range(episodes):
+        if episode % render_every == 0:
+            averageReward = count_steps/render_every
+            rewards_perEpisode.append(averageReward)
+            count_steps = 0
+        
+        max_position = -99
+        state = env.reset()
+        state = np.reshape(state, [1, Agent.state_size])
+        done = False
+        i = 0
+        while not done:
+            # if episode % render_every == 0 and episode > render_after_episode:
+            #     env.render()
+
+            action = Agent.take_action(state, trainAchieved)
+            next_state, reward, done, _ = env.step(action)
+            next_state = np.reshape(next_state, [1, Agent.state_size])
+            count_steps += 1
+            
+            #Keeping track of maximun position
+            if next_state[0][0] > max_position:
+                max_position = next_state[0][0]
+            
+            if next_state[0][0] >= 0.5:  #If car achieved the limit
+                reward += 10
+            #_max_episode_steps restricted to 200
+ 
+            Agent.remember(state, action, reward, next_state, done)
+            
+            # Agent.remember(state, action, reward, next_state, done)
+            state = next_state
+            i += 1
+            if done:
+                print("episode: {}/{}, score: {}, e: {:.2}".format(episode, episodes , i, Agent.epsilon))
+                #We save when we achieved a reward of -150
+                if i <= env._max_episode_steps-50 and trainAchieved == False:
+                    print("Saving trained model as mountainCar-dqn.h5")
+                    Agent.save("mountainCar-dqn"+str(iteration)+str(episode)+".h5")
+                    #trainAchieved = True
+                    #Agent.epsilon = Agent.epsilon_min
+                    #env.close()
+                    #return
+            # if done and episode % render_every == 0:
+            #      Agent.replay(True)
+            # else:
+            #     Agent.replay(False)
+            Agent.replay(not trainAchieved)
+        
+        # if episode % render_every == 0:
+        #     print("episode: " + str(episode) +" num_steps: " + str(count_steps) + 
+        #     " epsilon: " + str(Agent.epsilon))
+
+    exporterRewards.add_toCSV(rewards_perEpisode)
+    exporterRewards.create_csv("CartPolerewardsPerEpisode"+str(iteration)+".csv",1)
+    
+
 def testNetwork(env, agent, episodes):
     # agent.load("cartpole-dqn-tets_2.h5")
     agent.load("mountainCar-dqn0.h5")
