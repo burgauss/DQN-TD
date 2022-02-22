@@ -6,8 +6,9 @@ from matplotlib import animation
 import matplotlib.pyplot as plt
 
 
-from Environment_Modul.CartPoleEnvironment import CartPoleEnvironment, createMountainCarEnvironment
-from Environment_Modul.CartPoleEnvironment import createCartPoleEnvironment
+from Environment_Modul.Environments import CartPoleEnvironment, createMountainCarEnvironment
+from Environment_Modul.Environments import createCartPoleEnvironment
+from Environment_Modul.Environments import OneQuadrant
 from Exporter_Modul.Exporter_toCSV import Exporter_toCSV
 from NNModel.NNModelKlass import NNModelKlasse
 from TestBench.testBench import testBenchCartPole, testBenchMountainCar
