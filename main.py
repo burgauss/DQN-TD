@@ -197,7 +197,7 @@ def trainMountainCarNetwork(env, Agent, episodes, render_every, render_after_epi
                 if i <= env._max_episode_steps-50 and trainAchieved == False:
                     print("Saving trained model as mountainCar-dqn.h5")
                     Agent.save("mountainCar-dqn"+str(iteration)+".h5")
-                    trainAchieved = True
+                    #trainAchieved = True
                     Agent.epsilon = Agent.epsilon_min
                     #env.close()
                     #return
