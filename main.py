@@ -109,7 +109,7 @@ def main():
     
     #Gettin parameters and training
     if train == 0:
-        for i in range(1):
+        for i in range(2,3):
             parameters = testBenchOneQuadrant(i)
             learning_rate = parameters['alpha']
             episodes = parameters['max_episodes']
@@ -257,12 +257,12 @@ def trainOneQuadrant(env, Agent, episodes, render_every, render_after_episode, i
     rewards_perEpisode = []
     count_steps = 0
     trainAchieved = False
-    
+    episode_reward_every = 0
     for episode in range(episodes):
         if episode % render_every == 0:     #use to get the average reward
-            averageReward = count_steps/render_every
+            averageReward = episode_reward_every/(render_every*100)
             rewards_perEpisode.append(averageReward)
-            count_steps = 0
+            episode_reward_every = 0
         episode_reward = 0
         state = env.reset()
         state = np.reshape(state, [1, Agent.state_size])
@@ -274,11 +274,12 @@ def trainOneQuadrant(env, Agent, episodes, render_every, render_after_episode, i
             next_state = np.reshape(next_state, [1, Agent.state_size])
             count_steps += 1
             episode_reward += reward
+            episode_reward_every += episode_reward
             Agent.remember(state, action, reward, next_state, done)
             state = next_state
             i += 1
             if done:
-                print("episode: {}/{}, score: {}, e: {:.2}, ep_reward: {}".format(episode, episodes , i,
+                print("episode: {}/{}, score: {}, e: {}, ep_reward: {:.2f}".format(episode, episodes , i,
                                                                  Agent.epsilon, episode_reward))
 
             Agent.replay(not trainAchieved)
@@ -288,7 +289,7 @@ def trainOneQuadrant(env, Agent, episodes, render_every, render_after_episode, i
         #     " epsilon: " + str(Agent.epsilon))
 
     exporterRewards.add_toCSV(rewards_perEpisode)
-    exporterRewards.create_csv("CartPolerewardsPerEpisode"+str(iteration)+".csv",1)
+    exporterRewards.create_csv("OneQuadrantRewards_"+str(iteration)+".csv",1)
     
 
 def testNetwork(env, agent, episodes):

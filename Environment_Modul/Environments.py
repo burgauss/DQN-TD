@@ -52,7 +52,7 @@ class OneQuadrant:
         return self.observation_space
 
     def reset(self):
-        self.i = np.random.uniform(low = 0, high = 0.2)
+        self.i = np.random.uniform(low = 0, high = 0.001)
         self.state = self.i * self.resistor
         self.episode_ended = False
         self.i_dot = 0.0
