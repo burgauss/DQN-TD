@@ -1,3 +1,4 @@
+from gym import Env
 import numpy as np
 import pandas as pd
 from Agent import Agent
@@ -10,8 +11,8 @@ from Environment_Modul.Environments import CartPoleEnvironment, createMountainCa
 from Environment_Modul.Environments import createCartPoleEnvironment
 from Environment_Modul.Environments import OneQuadrant
 from Exporter_Modul.Exporter_toCSV import Exporter_toCSV
-from NNModel.NNModelKlass import NNModelKlasse
-from TestBench.testBench import testBenchCartPole, testBenchMountainCar
+from NNModel.NNModelKlass import NNModelKlasse, NNModelKlasseOneQuadrant
+from TestBench.testBench import testBenchCartPole, testBenchMountainCar, testBenchOneQuadrant
 from Tests.tests import test_environment_variables
 from Tests.tests import test_agent_actions
 from Tests.tests import test_video
@@ -69,6 +70,7 @@ def main():
     ###############################################
 
     # Environment creation
+    """
     env, state_size, action_size = createMountainCarEnvironment()
     
     #Gettin parameters and training
@@ -92,11 +94,44 @@ def main():
         DQNAgent = Agent(parameters, state_size, action_size, BATCH_SIZE,
             NNModel)
         testNetwork(env, agent=DQNAgent, episodes=10)
-
-
+    """
     ###############################################
     ###########Mountain Car Environment############
     ###############################################
+
+    ###############################################
+    #######Start One-Quadrant Environment##########
+    ###############################################
+    # Environment creation
+    env = OneQuadrant()
+    state_size = len(env.observation_space)
+    action_size = len(env.action_space)
+    
+    #Gettin parameters and training
+    if train == 0:
+        for i in range(1):
+            parameters = testBenchOneQuadrant(i)
+            learning_rate = parameters['alpha']
+            episodes = parameters['max_episodes']
+            render_every = parameters['render_every']
+            render_after_episode = parameters['render_after_episode']
+
+            NNModel = NNModelKlasseOneQuadrant(input_shape=(state_size,), action_space=action_size, lr=learning_rate)
+            DQNAgent = Agent(parameters, state_size, action_size, BATCH_SIZE,
+                        NNModel)
+            trainOneQuadrant(env, DQNAgent, episodes, render_every, render_after_episode, i)
+    else:
+        # Specify parameters for visualization
+        parameters = testBenchMountainCar(0)
+        learning_rate = parameters['alpha']
+        NNModel = NNModelKlasse(input_shape=(state_size,), action_space=action_size, lr=learning_rate)
+        DQNAgent = Agent(parameters, state_size, action_size, BATCH_SIZE,
+            NNModel)
+        testNetwork(env, agent=DQNAgent, episodes=10)
+    ###############################################
+    #######End One-Quadrant Environtmnet###########
+    ###############################################
+
 
 def trainCartPoleNetwork(env, Agent, episodes, render_every, render_after_episode, iteration):
     exporterRewards = Exporter_toCSV()

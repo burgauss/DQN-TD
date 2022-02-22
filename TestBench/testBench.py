@@ -178,17 +178,14 @@ def testBenchMountainCar(i):
 def testBenchOneQuadrant(i):
     if i == 0:
         alpha = 0.015
-        max_episodes = 80000
+        max_episodes = 4000
         gamma = 0.96
         train_start = 500
-        epsilon_decay = 0.999
+        epsilon_decay = 0.99999
         epsilon_min = 0.001
-        #start_greedy_episode = 10000
-        #episondes_of_greedynes = 5000
         render_every = 1000
         render_after_episode = max_episodes//2
         epsilon_start = 1
-        #epsilon_decrease_factor = epsilon_start/(max_episodes - start_greedy_episode - episondes_of_greedynes)
 
         parameters = {"alpha":alpha,"gamma":gamma,"max_episodes":max_episodes,"train_start":train_start,
                     "epsilon_decay":epsilon_decay,"render_every":render_every,
@@ -197,20 +194,16 @@ def testBenchOneQuadrant(i):
 
         return parameters
 
-        return parameters
     elif i == 1:
-        alpha = 0.015
-        max_episodes = 80000
-        gamma = 0.96
+        alpha = 0.001
+        max_episodes = 4000
+        gamma = 0.95
         train_start = 500
-        epsilon_decay = 0.999
+        epsilon_decay = 0.99999
         epsilon_min = 0.001
-        #start_greedy_episode = 10000
-        #episondes_of_greedynes = 5000
         render_every = 1000
         render_after_episode = max_episodes//2
         epsilon_start = 1
-        #epsilon_decrease_factor = epsilon_start/(max_episodes - start_greedy_episode - episondes_of_greedynes)
 
         parameters = {"alpha":alpha,"gamma":gamma,"max_episodes":max_episodes,"train_start":train_start,
                     "epsilon_decay":epsilon_decay,"render_every":render_every,
@@ -219,11 +212,11 @@ def testBenchOneQuadrant(i):
 
         return parameters
     elif i == 2:
-        alpha = 0.015
-        max_episodes = 80000
-        gamma = 0.96
+        alpha = 0.1
+        max_episodes = 4000
+        gamma = 0.95
         train_start = 500
-        epsilon_decay = 0.999
+        epsilon_decay = 0.99999
         epsilon_min = 0.001
         #start_greedy_episode = 10000
         #episondes_of_greedynes = 5000
