@@ -97,7 +97,7 @@ class OneQuadrant:
         return round(self.state,2), reward, self.episode_ended, {}
 
 
-#Example of initialization
+#Example of initialization of the OneQuadrant
 """
 env = OneQuadrant()
 action_close = 1
